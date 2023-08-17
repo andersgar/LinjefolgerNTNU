@@ -4,6 +4,7 @@ Car car("NTNU-IOT", "");
 bool lineMode = 0;
 int prevError = 0;
 bool turning = 0;
+bool avoiding = 0; // Toggles the avoiding on/off
 
 int maxSpeed = 90;
 bool lineColor = BLACK;
@@ -18,7 +19,7 @@ void setup() {
 
 void loop() {
   int lineValue = car.data[LINE].value;
-  //car.sendData(1, lineValue);
+  //car.sendData(1, lineValue); // Measurements from the IR sensor (-100:100), where 0 is the line
   //car.sendData(2, car.data[GYRO].value);
   
   if(lineMode && !turning){
@@ -31,8 +32,8 @@ void loop() {
     int proDATA = car.data[PROXIMITY].value;
     car.data[PROXIMITY].flag = false;
     car.sendData(2, proDATA); //sender proximity data til grafen 2 kontinuerlig ved void loop()
-    if(proDATA >= proxConf){
-      triangle(DOWN);
+    if(proDATA >= proxConf) && avoiding{
+      halfTurn(); // Replaced "triangle(DOWN)"
     }
   }
  
@@ -98,23 +99,34 @@ void q(bool button) {
    }
 }
 
+void halfTurn { // Does a 180-degree turn
+    turning = 1;  // "turning" overrides the line-follower's control of the car
+       car.drive(maxSpeed, -maxSpeed);
+       delay(550);
+       if(lineMode == 1){ // If it was previously following a line sets motors to maxSpeed
+           car.drive(maxSpeed, maxSpeed);
+       }else{ // Otherwise it stops the car
+           car.drive(0, 0);
+       }
+       turning = 0;
+}
+
+bool triangleSwitch = 1 // Allows alternating functionality of the "triangle" button
 void triangle(bool button) {
   if (button == DOWN) {
-    turning = 1;
-    car.drive(maxSpeed, -maxSpeed);
-    delay(550);
-    if(lineMode == 1){
-      car.drive(maxSpeed, maxSpeed);
-    }else{
-      car.drive(0, 0);
-    }
-    turning = 0;
+      if triangleSwitch {
+          avoiding = 1;
+          triangleSwitch = !triangleSwitch; // The other functionality runs at the next button press
+      }
+      else {
+          avoiding = 0;
+          triangleSwitch = !triangleSwitch; // The other functionality runs at the next button press
+      }
   }
 }
 
 void circle(bool button) {
-    lineMode = 0;
-    car.drive(0, 0);
+
 }
 
 bool squareSwitch = 1 // Allows alternating functionality of the "square" button
@@ -124,12 +136,12 @@ void square(bool button) {
           car.calibrateLine(lineColor);
           lineMode = 1;
           maxSpeed = 90; //resetter fart ved start av lineMode
-          squareSwitch = !squareSwitch // The other functionality runs at the next button press
+          squareSwitch = !squareSwitch; // The other functionality runs at the next button press
       }
-      else if !squareSwitch {
+      else {
           lineMode = 0;
           car.drive(0, 0);
-          squareSwitch = !squareSwitch // The other functionality runs at the next button press
+          squareSwitch = !squareSwitch; // The other functionality runs at the next button press
       }
   }
 }
