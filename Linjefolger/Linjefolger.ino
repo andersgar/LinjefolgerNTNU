@@ -121,5 +121,6 @@ void square(bool button) {
   if (button == DOWN) {
     car.calibrateLine(lineColor);
     lineMode = 1;
+    maxSpeed = 90; //resetter fart ved start av lineMode
   }
 }
