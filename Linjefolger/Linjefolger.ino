@@ -117,10 +117,19 @@ void circle(bool button) {
     car.drive(0, 0);
 }
 
+bool squareSwitch = 1 // Allows alternating functionality of the "square" button
 void square(bool button) {
   if (button == DOWN) {
-    car.calibrateLine(lineColor);
-    lineMode = 1;
-    maxSpeed = 90; //resetter fart ved start av lineMode
+      if squareSwitch {
+          car.calibrateLine(lineColor);
+          lineMode = 1;
+          maxSpeed = 90; //resetter fart ved start av lineMode
+          squareSwitch = !squareSwitch // The other functionality runs at the next button press
+      }
+      else if !squareSwitch {
+          lineMode = 0;
+          car.drive(0, 0);
+          squareSwitch = !squareSwitch // The other functionality runs at the next button press
+      }
   }
 }
