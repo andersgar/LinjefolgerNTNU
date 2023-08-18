@@ -19,8 +19,7 @@ void setup() {
 
 void loop() {
   int lineValue = car.data[LINE].value;
-  //car.sendData(1, lineValue); // Measurements from the IR sensor (-100:100), where 0 is the line
-  //car.sendData(2, car.data[GYRO].value);
+  car.sendData(3, maxSpeed);
   
   if(lineMode && !turning){
     float speedDifference = (lineValue*turnConf)+ turnConf2 * (lineValue - prevError);
@@ -32,8 +31,8 @@ void loop() {
     int proDATA = car.data[PROXIMITY].value;
     car.data[PROXIMITY].flag = false;
     car.sendData(2, proDATA); //sender proximity data til grafen 2 kontinuerlig ved void loop()
-    if(proDATA >= proxConf) && avoiding{
-      halfTurn(); // Replaced "triangle(DOWN)"
+    if(proDATA >= proxConf && avoiding){
+      triangle(DOWN); // Replaced "triangle(DOWN)"
     }
   }
  
@@ -60,7 +59,7 @@ void w(bool button) {
 
 void a(bool button) {
    if (button == DOWN) {
-      car.drive(-maxSpeed, maxSpeed);
+      car.drive(-maxSpeed/1.5, maxSpeed/1.5);
    }
    if (button == UP) {
       car.drive(0, 0);
@@ -78,7 +77,7 @@ void s(bool button) {
 
 void d(bool button) {
    if (button == DOWN) {
-      car.drive(maxSpeed, -maxSpeed);
+      car.drive(maxSpeed/1.5, -maxSpeed/1.5);
    }
    if (button == UP) {
       car.drive(0, 0);
@@ -98,7 +97,7 @@ void q(bool button) {
       maxSpeed = maxSpeed - 5;
    }
 }
-
+/*
 void halfTurn { // Does a 180-degree turn
     turning = 1;  // "turning" overrides the line-follower's control of the car
        car.drive(maxSpeed, -maxSpeed);
@@ -124,24 +123,39 @@ void triangle(bool button) {
       }
   }
 }
+*/
+void triangle(bool button) {
+  if (button == DOWN) {
+    turning = 1;
+    car.drive(maxSpeed, -maxSpeed);
+    delay(550);
+    if(lineMode == 1){
+      car.drive(maxSpeed, maxSpeed);
+    }else{
+      car.drive(0, 0);
+    }
+    turning = 0;
+  }
+}
 
 void circle(bool button) {
 
 }
 
-bool squareSwitch = 1 // Allows alternating functionality of the "square" button
+bool squareSwitch = 1; // Allows alternating functionality of the "square" button
 void square(bool button) {
   if (button == DOWN) {
-      if squareSwitch {
+      if (squareSwitch) {
           car.calibrateLine(lineColor);
           lineMode = 1;
-          maxSpeed = 90; //resetter fart ved start av lineMode
+          maxSpeed = 80; //resetter fart ved start av lineMode
           squareSwitch = !squareSwitch; // The other functionality runs at the next button press
       }
       else {
           lineMode = 0;
           car.drive(0, 0);
           squareSwitch = !squareSwitch; // The other functionality runs at the next button press
+          maxSpeed = 90;
       }
   }
 }
