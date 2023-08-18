@@ -4,13 +4,14 @@ Car car("NTNU-IOT", "");
 bool lineMode = 0;
 int prevError = 0;
 bool turning = 0;
-bool avoiding = 0; // Toggles the avoiding on/off
 
+///Preferences setup
 int maxSpeed = 90;
 bool lineColor = BLACK;
 float turnConf = 0.75;
 float turnConf2 = 1.8;
 int proxConf = 10;
+bool avoiding = 0; // Toggles the avoiding on/off
 
 void setup() {
   car.initCar();
@@ -30,9 +31,9 @@ void loop() {
   if (car.data[PROXIMITY].flag) {
     int proDATA = car.data[PROXIMITY].value;
     car.data[PROXIMITY].flag = false;
-    car.sendData(2, proDATA); //sender proximity data til grafen 2 kontinuerlig ved void loop()
+    car.sendData(2, proDATA);
     if(proDATA >= proxConf && avoiding){
-      triangle(DOWN); // Replaced "triangle(DOWN)"
+      triangle(DOWN);
     }
   }
  
@@ -49,53 +50,53 @@ void loop() {
 }
 
 void w(bool button) {
-   if (button == DOWN && !turning) {
-      car.drive(maxSpeed, maxSpeed);
-   }
-   if (button == UP) {
-      car.drive(0, 0);
-   }
+  if (button == DOWN && !turning) {
+    car.drive(maxSpeed, maxSpeed);
+  }
+  if (button == UP) {
+    car.drive(0, 0);
+  }
 }
 
 void a(bool button) {
-   if (button == DOWN) {
-      car.drive(-maxSpeed/1.5, maxSpeed/1.5);
-   }
-   if (button == UP) {
-      car.drive(0, 0);
-   }
+  if (button == DOWN) {
+    car.drive(-maxSpeed/1.7, maxSpeed/1.7);
+  }
+  if (button == UP) {
+    car.drive(0, 0);
+  }
 }
 
 void s(bool button) {
-   if (button == DOWN) {
-      car.drive(-maxSpeed, -maxSpeed);
-   }
-   if (button == UP) {
-      car.drive(0, 0);
-   }
+  if (button == DOWN) {
+    car.drive(-maxSpeed, -maxSpeed);
+  }
+  if (button == UP) {
+    car.drive(0, 0);
+  }
 }
 
 void d(bool button) {
-   if (button == DOWN) {
-      car.drive(maxSpeed/1.5, -maxSpeed/1.5);
-   }
-   if (button == UP) {
-      car.drive(0, 0);
-   }
+  if (button == DOWN) {
+    car.drive(maxSpeed/1.7, -maxSpeed/1.7);
+  }
+  if (button == UP) {
+    car.drive(0, 0);
+  }
 }
 
 void e(bool button) {
-   if (button == DOWN) {
-      maxSpeed = maxSpeed + 5;
-   }
-   if (button == UP) {
-   }
+  if (button == DOWN) {
+    maxSpeed = maxSpeed + 5;
+  }
+  if (button == UP) {
+  }
 }
 
 void q(bool button) {
-   if (button == DOWN) {
-      maxSpeed = maxSpeed - 5;
-   }
+  if (button == DOWN) {
+    maxSpeed = maxSpeed - 5;
+  }
 }
 /*
 void halfTurn { // Does a 180-degree turn
@@ -139,23 +140,24 @@ void triangle(bool button) {
 }
 
 void circle(bool button) {
-
+  if(button == DOWN){
+    car.calibrateLine(lineColor);
+  }
 }
 
 bool squareSwitch = 1; // Allows alternating functionality of the "square" button
 void square(bool button) {
   if (button == DOWN) {
-      if (squareSwitch) {
-          car.calibrateLine(lineColor);
-          lineMode = 1;
-          maxSpeed = 80; //resetter fart ved start av lineMode
-          squareSwitch = !squareSwitch; // The other functionality runs at the next button press
-      }
-      else {
-          lineMode = 0;
-          car.drive(0, 0);
-          squareSwitch = !squareSwitch; // The other functionality runs at the next button press
-          maxSpeed = 90;
-      }
+    if (squareSwitch) {
+      lineMode = 1;
+      maxSpeed = 80; //resetter fart ved start av lineMode
+      squareSwitch = !squareSwitch; // The other functionality runs at the next button press
+    }
+    else {
+      lineMode = 0;
+      car.drive(0, 0);
+      squareSwitch = !squareSwitch; // The other functionality runs at the next button press
+      maxSpeed = 90;
+    }
   }
 }
