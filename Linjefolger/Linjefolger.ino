@@ -99,15 +99,15 @@ void q(bool button) {
 }
 /*
 void halfTurn { // Does a 180-degree turn
-    turning = 1;  // "turning" overrides the line-follower's control of the car
-       car.drive(maxSpeed, -maxSpeed);
-       delay(550);
-       if(lineMode == 1){ // If it was previously following a line sets motors to maxSpeed
-           car.drive(maxSpeed, maxSpeed);
-       }else{ // Otherwise it stops the car
-           car.drive(0, 0);
-       }
-       turning = 0;
+  turning = 1;  // "turning" overrides the line-follower's control of the car
+  car.drive(maxSpeed, -maxSpeed);
+  delay(550);
+  if(lineMode == 1){ // If it was previously following a line sets motors to maxSpeed
+      car.drive(maxSpeed, maxSpeed);
+  }else{ // Otherwise it stops the car
+      car.drive(0, 0);
+  }
+  turning = 0;
 }
 
 bool triangleSwitch = 1 // Allows alternating functionality of the "triangle" button
